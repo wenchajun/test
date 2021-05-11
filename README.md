@@ -9,6 +9,8 @@ ks集群：All-In-One
 
 镜像仓库：DockerHub公有云仓库
 
+测试条件：安装Kubesphere集群，开启logging组件，并将fluent-bit升级为1.7.3
+
 测试范围：对fluent-bit1.7.3日志收集及其兼容性进行测试
 
 测试内容：测试fluent-bit 具体性能
