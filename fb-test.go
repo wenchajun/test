@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"math/rand"
 	"os"
@@ -11,7 +12,7 @@ import (
 
 func init() {
 	rand.Seed(time.Now().Unix())
-	file := "/test/logs/test.log";
+	file := "/dist/test.log";
 	logFile, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0766)
 	if err != nil {
 		panic(err)
@@ -38,7 +39,7 @@ func main() {
 			userId := rand.Intn(10000)
 			b=b+1
 			result := "elon|" +strconv.Itoa(userId+1) + "|" + a +"|"+strconv.Itoa(b);
-
+			fmt.Println(result )
 			log.Println(result ) // log 还是可以作为输出的前缀
 
 		}()
