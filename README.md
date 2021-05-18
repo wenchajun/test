@@ -34,3 +34,10 @@ ks集群：All-In-One
 
 
 预期结果：获取fluent-bit接收日志的最大值，了解fluent-bit的具体性能
+
+
+
+fluentd 是日志收集器，处理器和聚合器。
+
+fluent-Bit 是一个日志收集器和处理器（它没有 fluentd 等强大的聚合功能）。
+
