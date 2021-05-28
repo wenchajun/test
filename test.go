@@ -25,7 +25,7 @@ func init() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile | log.LUTC)
 }
 
-var N = flag.IntP("cycles", "N", 4, "Cycles per second")
+var N = flag.IntP("cycles", "N", 2000, "Cycles per second")
 var M = flag.IntP("logSize", "M", 2, "Output log size")
 var serial = 0 //流水号
 var lock sync.Mutex
@@ -63,9 +63,9 @@ func main() {
 
 		//fmt.Println("-------------")
 		//fmt.Println(elapsed)
-		fmt.Println("-------------")
-		fmt.Println(elapsed)
-
+	//	fmt.Println("-------------")
+	//	fmt.Println(elapsed)
+	//	log.Println(elapsed)
 		if elapsed < 1000000000 {
 			time.Sleep(time.Duration(1000000000-elapsed) * time.Nanosecond)
 		}
@@ -95,31 +95,14 @@ func Log(cycles int, logSize int) {
 			//fmt.Println(result)
             //fmt.Println("----------"+ "--------------",serial)
 			log.Println(result) // log 还是可以作为输出的前缀
-			fmt.Println(result)
+			//fmt.Println(result)
 			//lock.Unlock()
 
 		}()
 	}
 }
 
-//func concurrencylog(N int,c chan int,logSize int){
-//	for i := 0; i < N; i++ {
-//		a := "fluent-bit-test"
-//		serial = serial + 1
-//		c <-serial  // 发消息：我执行完啦！
-//		result := "name:eloncheng|" + "|" + a + "|" + "The current number is" + strconv.Itoa(serial)
-//
-//		for m := 0; m < logSize; m++ {
-//			result = result + result
-//		}
-//
-//		log.Println(result) // log 还是可以作为输出的前缀
-//		fmt.Println(result)
-//
-//
-//	}
-//	close(c)
-//}
+
 func concurrencylog(c chan int,logSize int){
 	for  {
 		lock.Lock()
@@ -133,10 +116,10 @@ func concurrencylog(c chan int,logSize int){
 		for m := 0; m < logSize; m++ {
 			result = result + result
 		}
-
+		log.Println(result)
 		fmt.Println(result)
 		lock.Unlock()
 
 	}
-	//close(c)
+	close(c)
 }

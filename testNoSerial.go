@@ -44,7 +44,7 @@ func main() {
 		if *N2 < 1000 {
 			Log2(*N2, *M2)
 		} else {
-			threadN := (*N2) / 1000
+			threadN := (*N2) / 150
 			for i :=0;i<*N2;i++{
 				serial2++
 				c2 <- serial2
@@ -60,8 +60,10 @@ func main() {
 
 		//fmt.Println("-------------")
 		//fmt.Println(elapsed)
-		//fmt.Println("-------------")
-
+	//	fmt.Println("-------------")
+	//	log.Println("-----------------------------------")
+	//	fmt.Println(elapsed)
+	//	log.Println(elapsed)
 		if elapsed < 1000000000 {
 			time.Sleep(time.Duration(1000000000-elapsed) * time.Nanosecond)
 		}
@@ -116,6 +118,6 @@ func concurrencylog2(c chan int,logSize int){
 		//lock.Unlock()
 
 	}
-	//close(c)
+	close(c)
 }
 
