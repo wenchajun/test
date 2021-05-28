@@ -29,11 +29,12 @@ var N = flag.IntP("cycles", "N", 2000, "Cycles per second")
 var M = flag.IntP("logSize", "M", 2, "Output log size")
 var serial = 0 //流水号
 var lock sync.Mutex
+
 //var quit chan int
 
 func main() {
 	flag.Parse()
-	var c=make(chan int,*N)
+	var c = make(chan int, *N)
 	for {
 		fmt.Println(*N)
 		fmt.Println(*M)
@@ -47,25 +48,25 @@ func main() {
 		} else {
 			threadN := (*N) / 500
 
-			for i :=0;i<*N;i++{
+			for i := 0; i < *N; i++ {
 				serial++
 				c <- serial
 			}
 			for i := 0; i < threadN; i++ {
 				//go concurrencylog(cap(c),c,*M)
-				go concurrencylog(c,*M)
-					}
+				go concurrencylog(c, *M)
+			}
 
-				}
+		}
 		end := time.Now().UnixNano()
 		elapsed := end - start
 		//elapsed := time.Since(t1).Nanoseconds()//计算过去了多久的时间
 
 		//fmt.Println("-------------")
 		//fmt.Println(elapsed)
-	//	fmt.Println("-------------")
-	//	fmt.Println(elapsed)
-	//	log.Println(elapsed)
+		//	fmt.Println("-------------")
+		//	fmt.Println(elapsed)
+		//	log.Println(elapsed)
 		if elapsed < 1000000000 {
 			time.Sleep(time.Duration(1000000000-elapsed) * time.Nanosecond)
 		}
@@ -87,27 +88,26 @@ func Log(cycles int, logSize int) {
 			//log.Println("----------"+ "--------------",serial)
 			//lock.Unlock()
 
-			result := "name:eloncheng|"  + "|" + a + "|" +"The current number is"+ strconv.Itoa(serial)
+			result := "name:eloncheng|" + "|" + a + "|" + "The current number is" + strconv.Itoa(serial)
 
 			for m := 0; m < logSize; m++ {
 				result = result + result
 			}
 			//fmt.Println(result)
-            //fmt.Println("----------"+ "--------------",serial)
+			//fmt.Println("----------"+ "--------------",serial)
 			log.Println(result) // log 还是可以作为输出的前缀
-			//fmt.Println(result)
+			fmt.Println(result)
 			//lock.Unlock()
 
 		}()
 	}
 }
 
-
-func concurrencylog(c chan int,logSize int){
-	for  {
+func concurrencylog(c chan int, logSize int) {
+	for {
 		lock.Lock()
 		No, ok := <-c
-		if !ok{
+		if !ok {
 			break
 		}
 		a := "fluent-bit-test"

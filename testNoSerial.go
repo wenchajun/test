@@ -32,7 +32,7 @@ var serial2 = 0 //流水号
 
 func main() {
 	flag.Parse()
-	var c2=make(chan int,*N2)
+	var c2 = make(chan int, *N2)
 	for {
 		fmt.Println(*N2)
 		fmt.Println(*M2)
@@ -45,13 +45,13 @@ func main() {
 			Log2(*N2, *M2)
 		} else {
 			threadN := (*N2) / 150
-			for i :=0;i<*N2;i++{
+			for i := 0; i < *N2; i++ {
 				serial2++
 				c2 <- serial2
 			}
 			for i := 0; i < threadN; i++ {
 				//go concurrencylog(cap(c),c,*M)
-				go concurrencylog2(c2,*M2)
+				go concurrencylog2(c2, *M2)
 			}
 		}
 		end := time.Now().UnixNano()
@@ -60,10 +60,10 @@ func main() {
 
 		//fmt.Println("-------------")
 		//fmt.Println(elapsed)
-	//	fmt.Println("-------------")
-	//	log.Println("-----------------------------------")
-	//	fmt.Println(elapsed)
-	//	log.Println(elapsed)
+		//	fmt.Println("-------------")
+		//	log.Println("-----------------------------------")
+		//	fmt.Println(elapsed)
+		//	log.Println(elapsed)
 		if elapsed < 1000000000 {
 			time.Sleep(time.Duration(1000000000-elapsed) * time.Nanosecond)
 		}
@@ -85,7 +85,7 @@ func Log2(cycles int, logSize int) {
 			//log.Println("----------"+ "--------------",serial)
 			//lock.Unlock()
 
-			result := "name:eloncheng|"  + "|" + a + "|" +"The current number is"+ strconv.Itoa(serial2)
+			result := "name:eloncheng|" + "|" + a + "|" + "The current number is" + strconv.Itoa(serial2)
 
 			for m := 0; m < logSize; m++ {
 				result = result + result
@@ -100,11 +100,11 @@ func Log2(cycles int, logSize int) {
 	}
 }
 
-func concurrencylog2(c chan int,logSize int){
-	for  {
+func concurrencylog2(c chan int, logSize int) {
+	for {
 		//lock.Lock()
 		No, ok := <-c
-		if !ok{
+		if !ok {
 			break
 		}
 		a := "fluent-bit-test"
@@ -120,4 +120,3 @@ func concurrencylog2(c chan int,logSize int){
 	}
 	close(c)
 }
-
