@@ -21,12 +21,12 @@ func init() {
 		panic(err)
 	}
 	log.SetOutput(logFile) // 将文件设置为log输出的文件
-	log.SetPrefix("[elk-test]")
-	log.SetFlags(log.LstdFlags | log.Lshortfile | log.LUTC)
+
 }
 
-var N = flag.IntP("cycles", "N", 2000, "Cycles per second")
-var M = flag.IntP("logSize", "M", 2, "Output log size")
+var N = flag.IntP("cycles", "N", 10, "Cycles per second")
+var M = flag.IntP("logSize", "M", 5, "Output log size")
+var C2 = flag.IntP("time", "C", 60, "time")
 var serial = 0 //流水号
 var lock sync.Mutex
 
@@ -35,9 +35,10 @@ var lock sync.Mutex
 func main() {
 	flag.Parse()
 	var c = make(chan int, *N)
-	for {
-		fmt.Println(*N)
-		fmt.Println(*M)
+	for o := 0; o < *C2; o++{
+
+		//fmt.Println(*N)
+		//fmt.Println(*M)
 
 		start := time.Now().UnixNano() //.UnixNano()//获取现在的时间
 
@@ -88,16 +89,34 @@ func Log(cycles int, logSize int) {
 			//log.Println("----------"+ "--------------",serial)
 			//lock.Unlock()
 
-			result := "name:eloncheng|" + "|" + a + "|" + "The current number is" + strconv.Itoa(serial)
 
-			for m := 0; m < logSize; m++ {
-				result = result + result
-			}
+
+
+
+
+
+
+			result := "name:eloncheng|" + "|" + a + "|" + "The current number is" + strconv.Itoa(serial)
+            _=result
+			fmt.Println("Dec 14 06:41:08 Exception : wrong !")
+			fmt.Println(" com.myproject.2)")
+			fmt.Println(" at com.myproject)")
+			log.Println("Dec 14 06:41:08 Exception in thread main java.lang.RuntimeException: Something has gone wrong, aborting!")
+			log.Println(" com.myproject.module.MyProject.badMethod(MyProject.java:22)")
+			log.Println(" at com.myproject.module.MyProject.oneMoreMethod(MyProject.java:18)")
+			log.Println(" at com.myproject.module.MyProject.anotherMethod(MyProject.java:14)")
+			log.Println(" at com.myproject.module.MyProject.someMethod(MyProject.java:10)")
+			log.Println(" at com.myproject.module.MyProject.main(MyProject.java:6)")
+
+
+			//for m := 0; m < logSize; m++ {
+			//	log.Println(result) // log 还是可以作为输出的前缀
+			//	fmt.Println(result)
+			//}
+
+			//log.Println(result) // log 还是可以作为输出的前缀
 			//fmt.Println(result)
-			//fmt.Println("----------"+ "--------------",serial)
-			log.Println(result) // log 还是可以作为输出的前缀
-			fmt.Println(result)
-			//lock.Unlock()
+
 
 		}()
 	}
@@ -114,10 +133,12 @@ func concurrencylog(c chan int, logSize int) {
 		// 发消息：我执行完啦！
 		result := "name:eloncheng|" + "|" + a + "|" + "The current number is" + strconv.Itoa(No)
 		for m := 0; m < logSize; m++ {
-			result = result + result
+			//result = result + result
+			log.Println(result)
+			fmt.Println(result)
 		}
-		log.Println(result)
-		fmt.Println(result)
+		//log.Println(result)
+		//fmt.Println(result)
 		lock.Unlock()
 
 	}

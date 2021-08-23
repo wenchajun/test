@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="PublishConfigData" serverName="test" remoteFilesAllowedToDisappearOnAutoupload="false">
+  <component name="PublishConfigData" serverName="test" remoteFilesAllowedToDisappearOnAutoupload="false" showNewOnSourceInSync="false" showExcludedInSync="true">
     <serverData>
       <paths name="test">
         <serverdata>

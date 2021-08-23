@@ -27,16 +27,14 @@ func init() {
 
 var N2 = flag.IntP("cycles", "N", 10, "Cycles per second")
 var M2 = flag.IntP("logSize", "M", 2, "Output log size")
+var C = flag.IntP("time", "C", 2, "time")
 var serial2 = 0 //流水号
 //var lock sync.Mutex
 
 func main() {
 	flag.Parse()
 	var c2 = make(chan int, *N2)
-	for {
-		fmt.Println(*N2)
-		fmt.Println(*M2)
-
+	for o := 0; o < *C; o++ {
 		start := time.Now().UnixNano() //.UnixNano()//获取现在的时间
 
 		//如果每秒发送1000条内就不用开启多线程
@@ -56,14 +54,6 @@ func main() {
 		}
 		end := time.Now().UnixNano()
 		elapsed := end - start
-		//elapsed := time.Since(t1).Nanoseconds()//计算过去了多久的时间
-
-		//fmt.Println("-------------")
-		//fmt.Println(elapsed)
-		//	fmt.Println("-------------")
-		//	log.Println("-----------------------------------")
-		//	fmt.Println(elapsed)
-		//	log.Println(elapsed)
 		if elapsed < 1000000000 {
 			time.Sleep(time.Duration(1000000000-elapsed) * time.Nanosecond)
 		}
@@ -85,7 +75,7 @@ func Log2(cycles int, logSize int) {
 			//log.Println("----------"+ "--------------",serial)
 			//lock.Unlock()
 
-			result := "name:eloncheng|" + "|" + a + "|" + "The current number is" + strconv.Itoa(serial2)
+			result := "name:eloncheng|" + "|" + a + "|" + "The current number is" + strconv.Itoa(100)
 
 			for m := 0; m < logSize; m++ {
 				result = result + result
