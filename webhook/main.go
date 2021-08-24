@@ -29,7 +29,7 @@ type Kubernetes struct {
 type sendMsg struct {
 	Receiver string   `json:"receiver"`
 	Status   string   `json:"status"`
-	Alert    []Alerts `json:"alert"`
+	Alert    Alerts   `json:"alerts"`
 }
 type Alerts struct {
 	Status       string      `json:"status"`
@@ -98,10 +98,10 @@ func main() {
 			alert.GeneratorURL = "http://prometheus-k8s-0:9090/graph?g0.expr=sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_throttled_periods_total%7Bcontainer%21%3D%22%22%7D%5B5m%5D%29%29+%2F+sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_periods_total%5B5m%5D%29%29+%3E+%2825+%2F+100%29\u0026g0.tab=1"
 			alert.Fingerprint = "83fb3d34d52108b0"
 			alert.EndsAt, _ = time.Parse("2006-01-02", "0001-01-01T00:00:00Z")
-			send.Alert = append(send.Alert, alert)
+			send.Alert = alert
 			sendmsg(send)
-			log.Printf("log=%s, stream=%s, time=%s\n", item.Log, item.Kubernetes, item.Time)
-			fmt.Printf("log=%s, stream=%s, time=%s\n", item.Log, item.Kubernetes, item.Time)
+			log.Printf("log=%s, kubernetes=%s, time=%s\n", item.Log, item.Kubernetes, item.Time)
+			fmt.Printf("log=%s, kubernetes=%s, time=%s\n", item.Log, item.Kubernetes, item.Time)
 		}
 	}
 	http.HandleFunc("/", h)
