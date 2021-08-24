@@ -26,9 +26,9 @@ type Kubernetes struct {
 type sendMsg struct {
 	Receiver string `json:"receiver"`
 	Status   string `json:"status"`
-	Alert    Alert  `json:"alert"`
+	Alert    []Alerts  `json:"alert"`
 }
-type Alert struct {
+type Alerts struct {
 	Status       string      `json:"status"`
 	Labels       Labels      `json:"labels"`
 	Annotations  Annotations `json:"annotations"`
@@ -74,18 +74,21 @@ func main() {
 			var send sendMsg
 			send.Receiver = "Default"
 			send.Status = "firing"
-			send.Alert.Status = "firing"
-			send.Alert.Labels.Alertname = "Podinfo"
-			send.Alert.Labels.Container = item.Kubernetes.ContainerName
-			send.Alert.Labels.Namespace = item.Kubernetes.NamespaceName
-			send.Alert.Labels.Pod = item.Kubernetes.PodName
-			send.Alert.Labels.Prometheus = "kubesphere-monitoring-system/k8s"
-			send.Alert.Labels.Severity = "warning"
-			send.Alert.Annotations.Message = item.Log
-			send.Alert.Annotations.Runbook_url = "https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-cputhrottlinghigh"
-			send.Alert.StartsAt = item.Time
-			send.Alert.GeneratorURL = "http://prometheus-k8s-0:9090/graph?g0.expr=sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_throttled_periods_total%7Bcontainer%21%3D%22%22%7D%5B5m%5D%29%29+%2F+sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_periods_total%5B5m%5D%29%29+%3E+%2825+%2F+100%29\u0026g0.tab=1"
-			send.Alert.Fingerprint = "83fb3d34d52108b0"
+            var alert Alerts
+			alert.Status = "firing"
+            alert.Labels.Alertname="Podinfo"
+            alert.Labels.Container=item.Kubernetes.ContainerName
+			alert.Labels.Namespace = item.Kubernetes.NamespaceName
+			alert.Labels.Pod = item.Kubernetes.PodName
+			alert.Labels.Prometheus = "kubesphere-monitoring-system/k8s"
+			alert.Labels.Severity = "warning"
+			alert.Annotations.Message = item.Log
+			alert.Annotations.Runbook_url = "https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-cputhrottlinghigh"
+			alert.StartsAt = item.Time
+			alert.GeneratorURL = "http://prometheus-k8s-0:9090/graph?g0.expr=sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_throttled_periods_total%7Bcontainer%21%3D%22%22%7D%5B5m%5D%29%29+%2F+sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_periods_total%5B5m%5D%29%29+%3E+%2825+%2F+100%29\u0026g0.tab=1"
+			alert.Fingerprint = "83fb3d34d52108b0"
+			alert.EndsAt="0001-01-01T00:00:00Z"
+			send.Alert=append(send.Alert, alert)
             sendmsg(send)
 			log.Printf("log=%s, stream=%s, time=%s\n", item.Log, item.Kubernetes, item.Time)
 			fmt.Printf("log=%s, stream=%s, time=%s\n", item.Log, item.Kubernetes, item.Time)
@@ -105,6 +108,7 @@ func sendmsg(msg sendMsg)  {
 	//url:= "http://10.233.50.126:19093/api/v2/alerts"
 	requestBody := new(bytes.Buffer)
 	json.NewEncoder(requestBody).Encode(msg)
+	fmt.Printf("msg--------=%s, resquestbody----=%s", msg,requestBody )
 	url:= "http://10.233.50.126:19093/api/v2/alerts"
 	req , err := http.NewRequest("POST",url,requestBody)
 
