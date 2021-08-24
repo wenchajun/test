@@ -26,20 +26,20 @@ type Kubernetes struct {
 	ContainerImage string `json:"container_image"`
 }
 
-type sendMsg struct {
-	Receiver string   `json:"receiver"`
-	Status   string   `json:"status"`
-	Alert    Alerts   `json:"alerts"`
-}
-type Alerts struct {
-	Status       string      `json:"status"`
-	Labels       template.KV `json:"labels"`
-	Annotations  template.KV `json:"annotations"`
-	StartsAt     time.Time   `json:"startsAt"`
-	EndsAt       time.Time   `json:"endsAt"`
-	GeneratorURL string      `json:"generatorURL"`
-	Fingerprint  string      `json:"fingerprint"`
-}
+//type sendMsg struct {
+//	Receiver string   `json:"receiver"`
+//	Status   string   `json:"status"`
+//	Alert    Alerts   `json:"alerts"`
+//}
+//type Alerts struct {
+//	Status       string      `json:"status"`
+//	Labels       template.KV `json:"labels"`
+//	Annotations  template.KV `json:"annotations"`
+//	StartsAt     time.Time   `json:"startsAt"`
+//	EndsAt       time.Time   `json:"endsAt"`
+//	GeneratorURL string      `json:"generatorURL"`
+//	Fingerprint  string      `json:"fingerprint"`
+//}
 
 //type Labels struct {
 //	Alertname  string `json:"alertname"`
@@ -76,10 +76,10 @@ func main() {
 		}
 
 		for _, item := range msg {
-			var send sendMsg
+			var send template.Data
 			send.Receiver = "Default"
 			send.Status = "firing"
-			var alert Alerts
+			var alert template.Alert
 			alert.Status = "firing"
 			alert.Labels = template.KV{
 				"alertname":  "Podinfo",
@@ -98,7 +98,7 @@ func main() {
 			alert.GeneratorURL = "http://prometheus-k8s-0:9090/graph?g0.expr=sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_throttled_periods_total%7Bcontainer%21%3D%22%22%7D%5B5m%5D%29%29+%2F+sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_periods_total%5B5m%5D%29%29+%3E+%2825+%2F+100%29\u0026g0.tab=1"
 			alert.Fingerprint = "83fb3d34d52108b0"
 			alert.EndsAt, _ = time.Parse("2006-01-02", "0001-01-01T00:00:00Z")
-			send.Alert = alert
+			send.Alerts=append(send.Alerts,alert)
 			sendmsg(send)
 			log.Printf("log=%s, kubernetes=%s, time=%s\n", item.Log, item.Kubernetes, item.Time)
 			fmt.Printf("log=%s, kubernetes=%s, time=%s\n", item.Log, item.Kubernetes, item.Time)
@@ -108,7 +108,7 @@ func main() {
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
-func sendmsg(msg sendMsg) {
+func sendmsg(msg template.Data) {
 
 	//sendjson, errs := json.Marshal(msg) //转换成JSON返回的是byte[]
 	//if errs != nil {
@@ -118,8 +118,8 @@ func sendmsg(msg sendMsg) {
 	//url:= "http://10.233.50.126:19093/api/v2/alerts"
 	requestBody := new(bytes.Buffer)
 	json.NewEncoder(requestBody).Encode(msg)
-	fmt.Printf("msg--------=%s, resquestbody----=%s", msg, requestBody)
-	url := "http://10.233.50.126:19093/api/v2/alerts"
+	fmt.Printf("msg-2.0-------=%s, resquestbody----=%s", msg, requestBody)
+	url := "http://notification-manager-svc.kubesphere-monitoring-system.svc:19093/api/v2/alerts"
 	req, err := http.NewRequest("POST", url, requestBody)
 
 	req.Header.Set("Content-Type", "application/json")
