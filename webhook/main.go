@@ -7,11 +7,14 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
+
+	"github.com/prometheus/alertmanager/template"
 )
 
 type Message struct {
 	Log        string     `json:"log"`
-	Time       string     `json:"time"`
+	Time       time.Time  `json:"time"`
 	Kubernetes Kubernetes `json:"kubernetes"`
 }
 
@@ -30,29 +33,31 @@ type sendMsg struct {
 }
 type Alerts struct {
 	Status       string      `json:"status"`
-	Labels       Labels      `json:"labels"`
-	Annotations  Annotations `json:"annotations"`
-	StartsAt     string      `json:"startsAt"`
-	EndsAt       string      `json:"endsAt"`
+	Labels       template.KV `json:"labels"`
+	Annotations  template.KV `json:"annotations"`
+	StartsAt     time.Time   `json:"startsAt"`
+	EndsAt       time.Time   `json:"endsAt"`
 	GeneratorURL string      `json:"generatorURL"`
 	Fingerprint  string      `json:"fingerprint"`
 }
-type Labels struct {
-	Alertname  string `json:"alertname"`
-	Container  string `json:"container"`
-	Namespace  string `json:"namespace"`
-	Pod        string `json:"pod"`
-	Prometheus string `json:"prometheus"`
-	Severity   string `json:" severity"`
-}
 
-type Annotations struct {
-	Message     string `json:"message"`
-	Runbook_url string `json:"runbook_url"`
-}
+//type Labels struct {
+//	Alertname  string `json:"alertname"`
+//	Container  string `json:"container"`
+//	Namespace  string `json:"namespace"`
+//	Pod        string `json:"pod"`
+//	Prometheus string `json:"prometheus"`
+//	Severity   string `json:" severity"`
+//}
+
+//type Annotations struct {
+//	Message     string `json:"message"`
+//	Runbook_url string `json:"runbook_url"`
+//}
 
 // Sample HTTP receiver for this demo
 func main() {
+
 	h := func(w http.ResponseWriter, req *http.Request) {
 		b, err := ioutil.ReadAll(req.Body)
 		defer req.Body.Close()
@@ -76,18 +81,23 @@ func main() {
 			send.Status = "firing"
 			var alert Alerts
 			alert.Status = "firing"
-			alert.Labels.Alertname = "Podinfo"
-			alert.Labels.Container = item.Kubernetes.ContainerName
-			alert.Labels.Namespace = item.Kubernetes.NamespaceName
-			alert.Labels.Pod = item.Kubernetes.PodName
-			alert.Labels.Prometheus = "kubesphere-monitoring-system/k8s"
-			alert.Labels.Severity = "warning"
-			alert.Annotations.Message = item.Log
-			alert.Annotations.Runbook_url = "https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-cputhrottlinghigh"
+			alert.Labels = template.KV{
+				"alertname":  "Podinfo",
+				"container":  item.Kubernetes.ContainerName,
+				"namespace":  item.Kubernetes.NamespaceName,
+				"pod":        item.Kubernetes.PodName,
+				"prometheus": "kubesphere-monitoring-system/k8s",
+				"severity":   "warning",
+			}
+			alert.Annotations = template.KV{
+				"message":     item.Log,
+				"runbook_url": "https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-cputhrottlinghigh",
+			}
+
 			alert.StartsAt = item.Time
 			alert.GeneratorURL = "http://prometheus-k8s-0:9090/graph?g0.expr=sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_throttled_periods_total%7Bcontainer%21%3D%22%22%7D%5B5m%5D%29%29+%2F+sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_periods_total%5B5m%5D%29%29+%3E+%2825+%2F+100%29\u0026g0.tab=1"
 			alert.Fingerprint = "83fb3d34d52108b0"
-			alert.EndsAt = "0001-01-01T00:00:00Z"
+			alert.EndsAt, _ = time.Parse("2006-01-02", "0001-01-01T00:00:00Z")
 			send.Alert = append(send.Alert, alert)
 			sendmsg(send)
 			log.Printf("log=%s, stream=%s, time=%s\n", item.Log, item.Kubernetes, item.Time)
