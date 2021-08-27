@@ -3,7 +3,14 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="8e42ed76-25b4-42ee-9d96-2c8d375c1ff6" name="test">
-        <fileTransfer rootFolder="/home/ubuntu/test" accessType="SFTP" host="103.61.39.71" port="22" sshConfigId="d11a4f4f-c043-4038-b530-f3e85484b38d" sshConfig="ubuntu@103.61.39.71:22 password">
+        <fileTransfer rootFolder="/home/ubuntu/test" accessType="SFTP" host="139.198.112.188" port="22" sshConfigId="d11a4f4f-c043-4038-b530-f3e85484b38d" sshConfig="root@139.198.112.188:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="ca7a4a07-f1eb-4855-8b1f-1a60f7d58e33" name="nm">
+        <fileTransfer rootFolder="/root/nm-log-receiver" accessType="SFTP" host="139.198.112.188" port="22" sshConfigId="d11a4f4f-c043-4038-b530-f3e85484b38d" sshConfig="root@139.198.112.188:22 password">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
           </advancedOptions>

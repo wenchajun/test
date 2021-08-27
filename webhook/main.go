@@ -82,23 +82,22 @@ func main() {
 			var alert template.Alert
 			alert.Status = "firing"
 			alert.Labels = template.KV{
-				"alertname":  "Podinfo",
-				"container":  item.Kubernetes.ContainerName,
-				"namespace":  item.Kubernetes.NamespaceName,
-				"pod":        item.Kubernetes.PodName,
-				"prometheus": "kubesphere-monitoring-system/k8s",
-				"severity":   "warning",
+				"alertname":      "logging-alert",
+				"container":      item.Kubernetes.ContainerName,
+				"containerimgae": item.Kubernetes.ContainerImage,
+				"namespace":      item.Kubernetes.NamespaceName,
+				"pod":            item.Kubernetes.PodName,
+				"label":          "keyword",
+				"severity":       "normal",
 			}
 			alert.Annotations = template.KV{
-				"message":     item.Log,
-				"runbook_url": "https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-cputhrottlinghigh",
+				"message": item.Log,
 			}
 
 			alert.StartsAt = item.Time
-			alert.GeneratorURL = "http://prometheus-k8s-0:9090/graph?g0.expr=sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_throttled_periods_total%7Bcontainer%21%3D%22%22%7D%5B5m%5D%29%29+%2F+sum+by%28container%2C+pod%2C+namespace%29+%28increase%28container_cpu_cfs_periods_total%5B5m%5D%29%29+%3E+%2825+%2F+100%29\u0026g0.tab=1"
 			alert.Fingerprint = "83fb3d34d52108b0"
 			alert.EndsAt, _ = time.Parse("2006-01-02", "0001-01-01T00:00:00Z")
-			send.Alerts=append(send.Alerts,alert)
+			send.Alerts = append(send.Alerts, alert)
 			sendmsg(send)
 			log.Printf("log=%s, kubernetes=%s, time=%s\n", item.Log, item.Kubernetes, item.Time)
 			fmt.Printf("log=%s, kubernetes=%s, time=%s\n", item.Log, item.Kubernetes, item.Time)
