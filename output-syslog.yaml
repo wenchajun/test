@@ -9,9 +9,8 @@ metadata:
 spec:
   matchRegex: (?:kube|service)\.(.*)
   syslog:
-    host: syslog服务器或ip地址
-    port: 端口
-    mode: 所需的传输类型tls,tcp,udp
-    syslogFormat: 需要使用的syslog格式rfc3164或者rfc5424
-    syslogMaxSize: 每条消息允许的最大大小
+    host: 192.168.0.1 #domain or IP address of the remote Syslog server.
+    port: 514 #TCP or UDP port of the remote Syslog server.
+    mode: tcp #Mode of the desired transport type, the available options are tcp, tls and udp.
+    syslogFormat: rfc3164 #protocol format to use, the available options are rfc3164 and rfc5424.
     
