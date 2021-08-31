@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fb-test-pod
+  namespace: fb-test
+spec:
+  containers:
+  - name: fb-test01
+    image: wenchajun/testnoserial:v0.5
+    imagePullPolicy: IfNotPresent
+    command: ["./app"]
+    args: ["-N=1","-M=2","-C=120"]
+  restartPolicy: Never
